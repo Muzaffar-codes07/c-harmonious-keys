@@ -1,10 +1,20 @@
 
+import { loadPianoSamples, getPianoSample, areSamplesLoaded } from './pianoSamples';
+
 // Create a singleton audio context
 let audioContext: AudioContext | null = null;
 
 export const getAudioContext = (): AudioContext => {
   if (!audioContext) {
     audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+    // Start loading piano samples as soon as audio context is created
+    loadPianoSamples(audioContext).then(success => {
+      if (success) {
+        console.log('Piano samples loaded and ready to play');
+      } else {
+        console.warn('Could not load piano samples, falling back to synthesized sound');
+      }
+    });
   }
   return audioContext;
 };
@@ -38,7 +48,7 @@ export const DURATIONS = {
   long: 600,
 };
 
-// Play a piano note with the given frequency and duration
+// Play a piano note with sample or synthesized sound as fallback
 export const playNote = (
   note: Note,
   octaveShift: OctaveShift = 0,
@@ -48,8 +58,49 @@ export const playNote = (
   
   // Get the actual note based on octave shift
   const actualNote = getShiftedNote(note, octaveShift);
-  const frequency = NOTE_FREQUENCIES[actualNote];
   const duration = DURATIONS[durationType] / 1000; // Convert to seconds
+
+  // Try to play the sample if available
+  const sample = getPianoSample(actualNote);
+  
+  if (sample) {
+    // Play the sample
+    const source = ctx.createBufferSource();
+    source.buffer = sample;
+    
+    // Create gain node for volume envelope
+    const gainNode = ctx.createGain();
+    gainNode.gain.setValueAtTime(1.0, ctx.currentTime);
+    
+    // For short notes, we want a quicker decay
+    if (durationType === 'short') {
+      gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+    } else {
+      // For normal and long notes, we use a natural piano decay
+      gainNode.gain.setValueAtTime(1.0, ctx.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.8, ctx.currentTime + 0.1);
+      gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration * 1.5);
+    }
+    
+    // Connect nodes and start playing
+    source.connect(gainNode);
+    gainNode.connect(ctx.destination);
+    
+    source.start();
+    source.stop(ctx.currentTime + duration * 2); // Give enough time for natural decay
+  } else {
+    // Fallback to synthesized sound if sample isn't loaded
+    fallbackSynthSound(ctx, actualNote, duration);
+  }
+};
+
+// Fallback synthesized sound using oscillator
+const fallbackSynthSound = (
+  ctx: AudioContext,
+  note: Note,
+  duration: number
+): void => {
+  const frequency = NOTE_FREQUENCIES[note];
 
   // Create oscillator for the piano sound
   const oscillator = ctx.createOscillator();
@@ -86,4 +137,9 @@ const getShiftedNote = (note: Note, octaveShift: OctaveShift): Note => {
   }
   
   return `${baseNote}${newOctave}` as Note;
+};
+
+// Check if audio is initialized and samples are loaded
+export const isAudioReady = (): boolean => {
+  return !!audioContext && areSamplesLoaded();
 };

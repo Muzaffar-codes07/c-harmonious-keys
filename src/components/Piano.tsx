@@ -5,7 +5,8 @@ import {
   type Note, 
   type OctaveShift, 
   type DurationType,
-  getAudioContext
+  getAudioContext,
+  isAudioReady
 } from '@/utils/audioContext';
 import { toast } from "@/components/ui/use-toast";
 
@@ -72,6 +73,7 @@ const Piano: React.FC = () => {
   const [durationType, setDurationType] = useState<DurationType>('normal');
   const [pressedKeys, setPressedKeys] = useState<Record<string, boolean>>({});
   const [initialized, setInitialized] = useState(false);
+  const [samplesLoaded, setSamplesLoaded] = useState(false);
 
   // Define piano keys structure - each inner array is one octave
   const pianoStructure = [
@@ -89,11 +91,31 @@ const Piano: React.FC = () => {
     { note: 'B4' as Note, isBlack: false, keyboardKey: 'J' },
   ];
 
+  // Check audio loading status
+  useEffect(() => {
+    const checkAudioStatus = () => {
+      const ready = isAudioReady();
+      setSamplesLoaded(ready);
+      
+      if (!ready) {
+        // If not ready, check again in a second
+        setTimeout(checkAudioStatus, 1000);
+      } else {
+        toast({ description: "Piano samples loaded!" });
+      }
+    };
+    
+    if (initialized) {
+      checkAudioStatus();
+    }
+  }, [initialized]);
+
   // Initialize audio context on first user interaction
   const initializeAudio = useCallback(() => {
     if (!initialized) {
       getAudioContext();
       setInitialized(true);
+      toast({ description: "Loading piano samples..." });
     }
   }, [initialized]);
 
@@ -188,6 +210,20 @@ const Piano: React.FC = () => {
           />
         ))}
       </div>
+      
+      {!initialized && (
+        <div className="absolute inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center cursor-pointer">
+          <p className="text-white text-xl">Click to activate piano</p>
+        </div>
+      )}
+      
+      {initialized && !samplesLoaded && (
+        <div className="absolute bottom-2 left-0 right-0 text-center">
+          <div className="inline-block bg-background/80 text-primary px-3 py-1 rounded-full text-sm">
+            Loading piano samples...
+          </div>
+        </div>
+      )}
     </div>
   );
 };

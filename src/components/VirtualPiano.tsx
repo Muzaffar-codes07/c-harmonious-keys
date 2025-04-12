@@ -27,6 +27,11 @@ const VirtualPiano: React.FC = () => {
         <p className="text-center text-gray-400 text-sm mt-4">
           Click the help icon for keyboard controls
         </p>
+        
+        <div className="text-center text-gray-400 text-sm mt-2">
+          <p>First click activates the piano and begins loading samples.</p>
+          <p>If samples aren't available, the piano will use synthesized sounds.</p>
+        </div>
       </div>
       
       <KeyboardMapping />
