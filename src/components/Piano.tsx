@@ -68,9 +68,19 @@ const PianoKey: React.FC<PianoKeyProps> = ({
   );
 };
 
-const Piano: React.FC = () => {
-  const [octaveShift, setOctaveShift] = useState<OctaveShift>(0);
-  const [durationType, setDurationType] = useState<DurationType>('normal');
+interface PianoProps {
+  octaveShift: OctaveShift;
+  setOctaveShift: React.Dispatch<React.SetStateAction<OctaveShift>>;
+  durationType: DurationType;
+  setDurationType: React.Dispatch<React.SetStateAction<DurationType>>;
+}
+
+const Piano: React.FC<PianoProps> = ({ 
+  octaveShift, 
+  setOctaveShift, 
+  durationType, 
+  setDurationType 
+}) => {
   const [pressedKeys, setPressedKeys] = useState<Record<string, boolean>>({});
   const [initialized, setInitialized] = useState(false);
   const [samplesLoaded, setSamplesLoaded] = useState(false);
@@ -119,6 +129,31 @@ const Piano: React.FC = () => {
     }
   }, [initialized]);
 
+  // Set duration and provide feedback
+  const setDurationWithFeedback = useCallback((newDuration: DurationType, modeName: string) => {
+    setDurationType(newDuration);
+    toast({ description: `${modeName} notes mode` });
+  }, [setDurationType]);
+
+  // Shift octave and provide feedback
+  const shiftOctaveWithFeedback = useCallback((direction: -1 | 0 | 1) => {
+    if ((octaveShift === -1 && direction < 0) || (octaveShift === 1 && direction > 0)) {
+      toast({ description: "Octave limit reached" });
+      return;
+    }
+    
+    const newOctaveShift = direction as OctaveShift;
+    setOctaveShift(newOctaveShift);
+    toast({ description: `Octave shifted ${direction > 0 ? "up" : "down"}` });
+  }, [octaveShift, setOctaveShift]);
+
+  // Reset settings
+  const resetSettings = useCallback(() => {
+    setOctaveShift(0);
+    setDurationType('normal');
+    toast({ description: "Settings reset" });
+  }, [setOctaveShift, setDurationType]);
+
   // Handle keyboard input
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     // Prevent repeat events when key is held down
@@ -129,36 +164,31 @@ const Piano: React.FC = () => {
     // Map keys to notes
     const key = e.key.toLowerCase();
     
-    // Mode controls
+    // Mode controls - matching the C implementation
     if (key === '1') {
-      setDurationType('short');
-      toast({ description: "Short notes mode" });
+      setDurationWithFeedback('short', "Short");
       return;
     } else if (key === '2') {
-      setDurationType('normal');
-      toast({ description: "Normal notes mode" });
+      setDurationWithFeedback('normal', "Normal");
       return;
     } else if (key === '3') {
-      setDurationType('long');
-      toast({ description: "Long notes mode" });
+      setDurationWithFeedback('long', "Long");
       return;
     } else if (key === '[') {
-      if (octaveShift > -1) {
-        setOctaveShift((prev) => prev === 0 ? -1 : 0);
-        toast({ description: "Octave shifted down" });
-      }
+      shiftOctaveWithFeedback(-1);
       return;
     } else if (key === ']') {
-      if (octaveShift < 1) {
-        setOctaveShift((prev) => prev === 0 ? 1 : 0);
-        toast({ description: "Octave shifted up" });
-      }
+      shiftOctaveWithFeedback(1);
       return;
     } else if (key === 'escape') {
-      // Reset settings
-      setOctaveShift(0);
-      setDurationType('normal');
-      toast({ description: "Settings reset" });
+      resetSettings();
+      return;
+    } else if (key === '?') {
+      // Display help as a toast
+      toast({ 
+        description: "Press [/] for octave shift, 1/2/3 for duration, ESC to reset",
+        duration: 5000
+      });
       return;
     }
 
@@ -169,7 +199,16 @@ const Piano: React.FC = () => {
       setPressedKeys(prev => ({ ...prev, [key]: true }));
       playNote(keyInfo.note, octaveShift, durationType);
     }
-  }, [octaveShift, durationType, pianoStructure, initialized]);
+  }, [
+    octaveShift, 
+    durationType, 
+    pianoStructure, 
+    initialized,
+    initializeAudio,
+    setDurationWithFeedback,
+    shiftOctaveWithFeedback,
+    resetSettings
+  ]);
 
   const handleKeyUp = useCallback((e: KeyboardEvent) => {
     const key = e.key.toLowerCase();

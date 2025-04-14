@@ -21,7 +21,12 @@ const VirtualPiano: React.FC = () => {
         
         <div className="bg-background/30 backdrop-blur-md rounded-lg shadow-2xl overflow-hidden">
           <StatusBar octaveShift={octaveShift} durationType={durationType} />
-          <Piano />
+          <Piano 
+            octaveShift={octaveShift} 
+            setOctaveShift={setOctaveShift} 
+            durationType={durationType} 
+            setDurationType={setDurationType} 
+          />
         </div>
         
         <p className="text-center text-gray-400 text-sm mt-4">
@@ -31,6 +36,7 @@ const VirtualPiano: React.FC = () => {
         <div className="text-center text-gray-400 text-sm mt-2">
           <p>First click activates the piano and begins loading samples.</p>
           <p>If samples aren't available, the piano will use synthesized sounds.</p>
+          <p>Place .wav files in public/piano-samples/ directory with format Csharp4.wav, D5.wav, etc.</p>
         </div>
       </div>
       

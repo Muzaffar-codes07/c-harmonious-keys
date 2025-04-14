@@ -59,6 +59,11 @@ const KeyboardMapping: React.FC = () => {
               <div><span className="bg-primary/20 rounded px-1">ESC</span> Reset</div>
             </div>
           </div>
+          
+          <div className="text-xs text-muted-foreground border-t pt-2 mt-2">
+            <p>Place WAV files in public/piano-samples/ directory:</p>
+            <p>Example filenames: C4.wav, Dsharp3.wav, F5.wav</p>
+          </div>
         </div>
       </PopoverContent>
     </Popover>

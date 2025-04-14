@@ -1,5 +1,5 @@
 
-import { loadPianoSamples, getPianoSample, areSamplesLoaded } from './pianoSamples';
+import { loadPianoSamples, getPianoSample, areSamplesLoaded, getOctaveRange } from './pianoSamples';
 
 // Create a singleton audio context
 let audioContext: AudioContext | null = null;
@@ -19,8 +19,18 @@ export const getAudioContext = (): AudioContext => {
   return audioContext;
 };
 
-// Define note frequencies (in Hz)
+// Define note frequencies (in Hz) - used as fallback
 const NOTE_FREQUENCIES = {
+  // Octave 1
+  C1: 32.70, Cs1: 34.65, D1: 36.71, Ds1: 38.89, 
+  E1: 41.20, F1: 43.65, Fs1: 46.25, G1: 49.00, 
+  Gs1: 51.91, A1: 55.00, As1: 58.27, B1: 61.74,
+  
+  // Octave 2
+  C2: 65.41, Cs2: 69.30, D2: 73.42, Ds2: 77.78, 
+  E2: 82.41, F2: 87.31, Fs2: 92.50, G2: 98.00, 
+  Gs2: 103.83, A2: 110.00, As2: 116.54, B2: 123.47,
+  
   // Octave 3
   C3: 130.81, Cs3: 138.59, D3: 146.83, Ds3: 155.56, 
   E3: 164.81, F3: 174.61, Fs3: 185.00, G3: 196.00, 
@@ -41,7 +51,7 @@ export type Note = keyof typeof NOTE_FREQUENCIES;
 export type OctaveShift = -1 | 0 | 1;
 export type DurationType = 'short' | 'normal' | 'long';
 
-// Duration mapping in milliseconds
+// Duration mapping in milliseconds, matching the C implementation
 export const DURATIONS = {
   short: 150,
   normal: 350,
@@ -131,8 +141,9 @@ const getShiftedNote = (note: Note, octaveShift: OctaveShift): Note => {
   // Calculate the new octave
   const newOctave = currentOctave + octaveShift;
   
-  // Only allow octaves 3-5
-  if (newOctave < 3 || newOctave > 5) {
+  // Only allow octaves within our range
+  const { min, max } = getOctaveRange();
+  if (newOctave < min || newOctave > max) {
     return note;
   }
   

@@ -6,12 +6,26 @@ const SAMPLES_BASE_URL = '/piano-samples/';
 // Cache for loaded audio buffers
 const sampleCache: Record<string, AudioBuffer> = {};
 
+// Define octave range
+const MIN_OCTAVE = 1;
+const MAX_OCTAVE = 5;
+
+// Generate the full list of notes we need to load samples for
+const generateNoteNames = (): string[] => {
+  const baseNotes = ['C', 'Cs', 'D', 'Ds', 'E', 'F', 'Fs', 'G', 'Gs', 'A', 'As', 'B'];
+  const allNotes: string[] = [];
+  
+  for (let octave = MIN_OCTAVE; octave <= MAX_OCTAVE; octave++) {
+    for (const note of baseNotes) {
+      allNotes.push(`${note}${octave}`);
+    }
+  }
+  
+  return allNotes;
+};
+
 // Notes we need to load samples for
-const noteNames = [
-  'C3', 'Cs3', 'D3', 'Ds3', 'E3', 'F3', 'Fs3', 'G3', 'Gs3', 'A3', 'As3', 'B3',
-  'C4', 'Cs4', 'D4', 'Ds4', 'E4', 'F4', 'Fs4', 'G4', 'Gs4', 'A4', 'As4', 'B4',
-  'C5', 'Cs5', 'D5', 'Ds5', 'E5', 'F5', 'Fs5', 'G5', 'Gs5', 'A5', 'As5', 'B5',
-];
+const noteNames = generateNoteNames();
 
 // Convert internal note name format to filename format
 const getNoteFilename = (note: string): string => {
@@ -43,12 +57,16 @@ export const loadPianoSamples = async (audioContext: AudioContext): Promise<bool
   try {
     const loadPromises = noteNames.map(async (note) => {
       if (!sampleCache[note]) {
-        sampleCache[note] = await loadSample(audioContext, note);
+        try {
+          sampleCache[note] = await loadSample(audioContext, note);
+        } catch (error) {
+          console.warn(`Failed to load sample for ${note}, will use synthesized fallback`);
+        }
       }
     });
     
     await Promise.all(loadPromises);
-    console.log('All piano samples loaded successfully');
+    console.log('Piano samples loaded successfully');
     return true;
   } catch (error) {
     console.error('Failed to load piano samples:', error);
@@ -63,10 +81,15 @@ export const getPianoSample = (note: string): AudioBuffer | undefined => {
 
 // Check if all samples are loaded
 export const areSamplesLoaded = (): boolean => {
-  return noteNames.every(note => !!sampleCache[note]);
+  return noteNames.some(note => !!sampleCache[note]);
 };
 
 // Check if a specific sample is loaded
 export const isSampleLoaded = (note: string): boolean => {
   return !!sampleCache[note];
+};
+
+// Get the min and max octaves
+export const getOctaveRange = (): {min: number, max: number} => {
+  return {min: MIN_OCTAVE, max: MAX_OCTAVE};
 };
