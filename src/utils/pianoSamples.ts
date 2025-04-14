@@ -1,7 +1,8 @@
+import { type Note } from '@/utils/audioContext';
 
-// Define the base URL for piano samples
-// This assumes you'll add piano samples to the public/piano-samples folder
-const SAMPLES_BASE_URL = '/piano-samples/';
+// You can now easily change the base URL for piano samples
+// Default is '/piano-samples/', but you can modify this to any path
+const SAMPLES_BASE_URL = '/custom-piano-samples/';
 
 // Cache for loaded audio buffers
 const sampleCache: Record<string, AudioBuffer> = {};
