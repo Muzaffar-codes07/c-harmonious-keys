@@ -1,72 +1,11 @@
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { 
-  playNote, 
-  type Note, 
-  type OctaveShift, 
-  type DurationType,
-  getAudioContext,
-  isAudioReady
-} from '@/utils/audioContext';
-import { toast } from "@/components/ui/use-toast";
-
-interface PianoKeyProps {
-  note: Note;
-  isBlack?: boolean;
-  keyboardKey?: string;
-  octaveShift: OctaveShift;
-  durationType: DurationType;
-  isPressed: boolean;
-  onNotePlay: (note: Note) => void;
-}
-
-const PianoKey: React.FC<PianoKeyProps> = ({ 
-  note, 
-  isBlack = false, 
-  keyboardKey, 
-  octaveShift,
-  durationType,
-  isPressed,
-  onNotePlay
-}) => {
-  // Get the last character of the note as the display note
-  const displayNote = note.replace(/s/, '#').slice(0, -1);
-  
-  const handleClick = () => {
-    onNotePlay(note);
-    playNote(note, octaveShift, durationType);
-  };
-
-  return (
-    <div 
-      className={`
-        relative 
-        ${isBlack 
-          ? 'bg-[--black-key] text-white h-32 w-10 -mx-5 z-10' 
-          : 'bg-[--white-key] text-black h-48 w-14'
-        } 
-        rounded-b-md 
-        cursor-pointer 
-        flex 
-        flex-col 
-        justify-end 
-        items-center 
-        pb-3
-        transition-colors
-        ${isPressed ? 'bg-[--key-press] animate-key-press' : ''}
-        hover:bg-primary/50
-      `}
-      onClick={handleClick}
-    >
-      <div className="text-xs opacity-60">{displayNote}</div>
-      {keyboardKey && (
-        <div className="absolute bottom-12 text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center bg-background/80">
-          {keyboardKey}
-        </div>
-      )}
-    </div>
-  );
-};
+import React, { useCallback } from 'react';
+import { type Note, type OctaveShift, type DurationType } from '@/utils/audioContext';
+import PianoKey from './PianoKey';
+import PianoOverlay from './PianoOverlay';
+import { usePianoKeyboard } from '@/hooks/usePianoKeyboard';
+import { useAudioInitializer } from '@/hooks/useAudioInitializer';
+import { pianoStructure } from '@/utils/pianoConstants';
 
 interface PianoProps {
   octaveShift: OctaveShift;
@@ -81,154 +20,20 @@ const Piano: React.FC<PianoProps> = ({
   durationType, 
   setDurationType 
 }) => {
-  const [pressedKeys, setPressedKeys] = useState<Record<string, boolean>>({});
-  const [initialized, setInitialized] = useState(false);
-  const [samplesLoaded, setSamplesLoaded] = useState(false);
-
-  // Define piano keys structure - each inner array is one octave
-  const pianoStructure = [
-    { note: 'C4' as Note, isBlack: false, keyboardKey: 'A' },
-    { note: 'Cs4' as Note, isBlack: true, keyboardKey: 'W' },
-    { note: 'D4' as Note, isBlack: false, keyboardKey: 'S' },
-    { note: 'Ds4' as Note, isBlack: true, keyboardKey: 'E' },
-    { note: 'E4' as Note, isBlack: false, keyboardKey: 'D' },
-    { note: 'F4' as Note, isBlack: false, keyboardKey: 'F' },
-    { note: 'Fs4' as Note, isBlack: true, keyboardKey: 'T' },
-    { note: 'G4' as Note, isBlack: false, keyboardKey: 'G' },
-    { note: 'Gs4' as Note, isBlack: true, keyboardKey: 'Y' },
-    { note: 'A4' as Note, isBlack: false, keyboardKey: 'H' },
-    { note: 'As4' as Note, isBlack: true, keyboardKey: 'U' },
-    { note: 'B4' as Note, isBlack: false, keyboardKey: 'J' },
-  ];
-
-  // Check audio loading status
-  useEffect(() => {
-    const checkAudioStatus = () => {
-      const ready = isAudioReady();
-      setSamplesLoaded(ready);
-      
-      if (!ready) {
-        // If not ready, check again in a second
-        setTimeout(checkAudioStatus, 1000);
-      } else {
-        toast({ description: "Piano samples loaded!" });
-      }
-    };
-    
-    if (initialized) {
-      checkAudioStatus();
-    }
-  }, [initialized]);
-
-  // Initialize audio context on first user interaction
-  const initializeAudio = useCallback(() => {
-    if (!initialized) {
-      getAudioContext();
-      setInitialized(true);
-      toast({ description: "Loading piano samples..." });
-    }
-  }, [initialized]);
-
-  // Set duration and provide feedback
-  const setDurationWithFeedback = useCallback((newDuration: DurationType, modeName: string) => {
-    setDurationType(newDuration);
-    toast({ description: `${modeName} notes mode` });
-  }, [setDurationType]);
-
-  // Shift octave and provide feedback
-  const shiftOctaveWithFeedback = useCallback((direction: -1 | 0 | 1) => {
-    if ((octaveShift === -1 && direction < 0) || (octaveShift === 1 && direction > 0)) {
-      toast({ description: "Octave limit reached" });
-      return;
-    }
-    
-    const newOctaveShift = direction as OctaveShift;
-    setOctaveShift(newOctaveShift);
-    toast({ description: `Octave shifted ${direction > 0 ? "up" : "down"}` });
-  }, [octaveShift, setOctaveShift]);
-
-  // Reset settings
-  const resetSettings = useCallback(() => {
-    setOctaveShift(0);
-    setDurationType('normal');
-    toast({ description: "Settings reset" });
-  }, [setOctaveShift, setDurationType]);
-
-  // Handle keyboard input
-  const handleKeyDown = useCallback((e: KeyboardEvent) => {
-    // Prevent repeat events when key is held down
-    if (e.repeat) return;
-    
-    initializeAudio();
-
-    // Map keys to notes
-    const key = e.key.toLowerCase();
-    
-    // Mode controls - matching the C implementation
-    if (key === '1') {
-      setDurationWithFeedback('short', "Short");
-      return;
-    } else if (key === '2') {
-      setDurationWithFeedback('normal', "Normal");
-      return;
-    } else if (key === '3') {
-      setDurationWithFeedback('long', "Long");
-      return;
-    } else if (key === '[') {
-      shiftOctaveWithFeedback(-1);
-      return;
-    } else if (key === ']') {
-      shiftOctaveWithFeedback(1);
-      return;
-    } else if (key === 'escape') {
-      resetSettings();
-      return;
-    } else if (key === '?') {
-      // Display help as a toast
-      toast({ 
-        description: "Press [/] for octave shift, 1/2/3 for duration, ESC to reset",
-        duration: 5000
-      });
-      return;
-    }
-
-    // Find the note for this key
-    const keyInfo = pianoStructure.find(k => k.keyboardKey?.toLowerCase() === key);
-    
-    if (keyInfo) {
-      setPressedKeys(prev => ({ ...prev, [key]: true }));
-      playNote(keyInfo.note, octaveShift, durationType);
-    }
-  }, [
-    octaveShift, 
-    durationType, 
-    pianoStructure, 
-    initialized,
-    initializeAudio,
-    setDurationWithFeedback,
-    shiftOctaveWithFeedback,
-    resetSettings
-  ]);
-
-  const handleKeyUp = useCallback((e: KeyboardEvent) => {
-    const key = e.key.toLowerCase();
-    setPressedKeys(prev => ({ ...prev, [key]: false }));
-  }, []);
-
-  // Set up keyboard event listeners
-  useEffect(() => {
-    window.addEventListener('keydown', handleKeyDown);
-    window.addEventListener('keyup', handleKeyUp);
-    
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-      window.removeEventListener('keyup', handleKeyUp);
-    };
-  }, [handleKeyDown, handleKeyUp]);
-
+  const { initialized, samplesLoaded, initializeAudio } = useAudioInitializer();
+  
   const handleNotePlay = useCallback((note: Note) => {
     initializeAudio();
   }, [initializeAudio]);
+
+  const { pressedKeys } = usePianoKeyboard({
+    octaveShift,
+    setOctaveShift,
+    durationType,
+    setDurationType,
+    pianoStructure,
+    initializeAudio
+  });
 
   return (
     <div 
@@ -250,19 +55,11 @@ const Piano: React.FC<PianoProps> = ({
         ))}
       </div>
       
-      {!initialized && (
-        <div className="absolute inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center cursor-pointer">
-          <p className="text-white text-xl">Click to activate piano</p>
-        </div>
-      )}
-      
-      {initialized && !samplesLoaded && (
-        <div className="absolute bottom-2 left-0 right-0 text-center">
-          <div className="inline-block bg-background/80 text-primary px-3 py-1 rounded-full text-sm">
-            Loading piano samples...
-          </div>
-        </div>
-      )}
+      <PianoOverlay 
+        initialized={initialized}
+        samplesLoaded={samplesLoaded}
+        onInitialize={initializeAudio}
+      />
     </div>
   );
 };
