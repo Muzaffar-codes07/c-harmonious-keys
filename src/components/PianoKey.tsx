@@ -21,7 +21,6 @@ const PianoKey: React.FC<PianoKeyProps> = ({
   isPressed,
   onNotePlay
 }) => {
-  // Get the last character of the note as the display note
   const displayNote = note.replace(/s/, '#').slice(0, -1);
   
   const handleClick = () => {
@@ -34,8 +33,8 @@ const PianoKey: React.FC<PianoKeyProps> = ({
       className={`
         relative 
         ${isBlack 
-          ? 'bg-[--black-key] text-white h-32 w-10 -mx-5 z-10' 
-          : 'bg-[--white-key] text-black h-48 w-14'
+          ? 'bg-[--black-key] text-white/60 h-32 w-10 -mx-5 z-10' 
+          : 'bg-[--white-key] text-black/60 h-48 w-14'
         } 
         rounded-b-md 
         cursor-pointer 
@@ -44,18 +43,18 @@ const PianoKey: React.FC<PianoKeyProps> = ({
         justify-end 
         items-center 
         pb-3
-        transition-colors
+        transition-all
         ${isPressed ? 'bg-[--key-press] animate-key-press' : ''}
-        hover:bg-primary/50
+        hover:bg-primary/30
       `}
       onClick={handleClick}
     >
-      <div className="text-xs opacity-60">{displayNote}</div>
       {keyboardKey && (
-        <div className="absolute bottom-12 text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center bg-background/80">
+        <div className="absolute bottom-12 text-[10px] font-medium opacity-40">
           {keyboardKey}
         </div>
       )}
+      <div className="text-xs opacity-40 mt-1">{displayNote}</div>
     </div>
   );
 };

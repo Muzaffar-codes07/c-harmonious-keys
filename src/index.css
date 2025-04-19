@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -84,17 +83,21 @@
 @keyframes float-up {
   0% {
     transform: translateY(0) rotate(var(--rotation));
+    opacity: 0;
+    scale: 0.8;
+  }
+  15% {
     opacity: 1;
     scale: 1;
   }
-  50% {
-    opacity: 0.8;
-    scale: 1.2;
+  85% {
+    opacity: 1;
+    scale: 1.1;
   }
   100% {
     transform: translateY(-100vh) rotate(var(--rotation));
     opacity: 0;
-    scale: 0.8;
+    scale: 0.9;
   }
 }
 
@@ -107,4 +110,3 @@
 .animate-key-press {
   animation: keyPress 0.15s ease-in-out;
 }
-
