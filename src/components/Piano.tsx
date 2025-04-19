@@ -42,18 +42,18 @@ const Piano: React.FC<PianoProps> = ({
 
   // Handle octave shifting with explicit buttons
   const handleOctaveShift = (direction: -1 | 1) => {
-    const newOctaveShift = Math.max(-1, Math.min(1, Number(octaveShift) + direction)) as OctaveShift;
-    
-    // Determine actual octave range
-    const currentOctave = 3 + Number(octaveShift); // Default is octave 3
+    // Calculate current and new octave
+    const currentOctave = 3 + Number(octaveShift);
     const newOctave = currentOctave + direction;
     
-    // Check if we're within the allowed range (1-5)
+    // Check for octave limits (1-5)
     if (newOctave < 1 || newOctave > 5) {
-      toast({ description: `Octave limit reached (Octave ${newOctave} not available)` });
+      toast({ description: `Octave limit reached (${newOctave})` });
       return;
     }
     
+    // Convert back to octave shift value (-1, 0, 1)
+    const newOctaveShift = (newOctave - 3) as OctaveShift;
     setOctaveShift(newOctaveShift);
     toast({ description: `Octave shifted to ${newOctave}` });
   };
@@ -84,7 +84,7 @@ const Piano: React.FC<PianoProps> = ({
         </button>
       </div>
 
-      <div className="flex relative">
+      <div className="flex relative rounded-xl overflow-hidden border-2 border-gray-800">
         {pianoStructure.map((key, index) => (
           <PianoKey
             key={key.note}

@@ -30,14 +30,20 @@ export const usePianoKeyboard = ({
 
   // Shift octave and provide feedback
   const shiftOctaveWithFeedback = useCallback((direction: -1 | 0 | 1) => {
-    if ((octaveShift === -1 && direction < 0) || (octaveShift === 1 && direction > 0)) {
-      toast({ description: "Octave limit reached" });
+    // Calculate current and new octave
+    const currentOctave = 3 + Number(octaveShift);
+    const newOctave = currentOctave + direction;
+    
+    // Check for octave limits (1-5)
+    if (newOctave < 1 || newOctave > 5) {
+      toast({ description: `Octave limit reached (${newOctave})` });
       return;
     }
     
-    const newOctaveShift = direction as OctaveShift;
+    // Convert back to octave shift value (-1, 0, 1)
+    const newOctaveShift = (newOctave - 3) as OctaveShift;
     setOctaveShift(newOctaveShift);
-    toast({ description: `Octave shifted ${direction > 0 ? "up" : "down"}` });
+    toast({ description: `Octave shifted to ${newOctave}` });
   }, [octaveShift, setOctaveShift]);
 
   // Reset settings

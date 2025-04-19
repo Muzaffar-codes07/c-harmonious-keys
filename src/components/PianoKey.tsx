@@ -33,8 +33,8 @@ const PianoKey: React.FC<PianoKeyProps> = ({
       className={`
         relative 
         ${isBlack 
-          ? 'bg-[--black-key] text-white/60 h-32 w-10 -mx-5 z-10' 
-          : 'bg-[--white-key] text-black/60 h-48 w-14'
+          ? 'bg-[#222] text-white/60 h-32 w-10 -mx-5 z-10' 
+          : 'bg-[#ddd] text-black/60 h-48 w-14'
         } 
         rounded-b-md 
         cursor-pointer 
@@ -50,8 +50,8 @@ const PianoKey: React.FC<PianoKeyProps> = ({
       onClick={handleClick}
     >
       {keyboardKey && (
-        <div className="absolute bottom-12 text-[10px] font-medium opacity-40">
-          {keyboardKey}
+        <div className="absolute bottom-12 text-[10px] font-medium opacity-60 text-black">
+          {keyboardKey.toLowerCase()}
         </div>
       )}
       <div className="text-xs opacity-40 mt-1">{displayNote}</div>

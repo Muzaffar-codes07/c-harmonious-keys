@@ -22,30 +22,34 @@ const FloatingNotes: React.FC<FloatingNotesProps> = ({ lastNotePlayed }) => {
 
   // Enhanced color palette matching the image
   const noteColors = [
-    { class: 'text-red-400', hex: '#f87171' },
+    { class: 'text-red-500', hex: '#ef4444' },
     { class: 'text-slate-300', hex: '#cbd5e1' },
-    { class: 'text-orange-300', hex: '#fdba74' }
+    { class: 'text-orange-400', hex: '#fb923c' }
   ];
 
   useEffect(() => {
     if (lastNotePlayed) {
-      const randomColor = noteColors[Math.floor(Math.random() * noteColors.length)];
-      const newNote: Note = {
-        id: Date.now(),
-        x: Math.random() * 80 + 10,
-        y: 0,
-        rotation: Math.random() * 360,
-        color: randomColor.class,
-        colorHex: randomColor.hex,
-        size: Math.random() * 16 + 24, // Larger size range
-        variant: Math.random() > 0.5 ? 'music' : 'note'
-      };
+      // Create more notes per key press to match the reference image
+      for (let i = 0; i < 3; i++) {
+        const randomColor = noteColors[Math.floor(Math.random() * noteColors.length)];
+        const newNote: Note = {
+          id: Date.now() + i,
+          x: Math.random() * 80 + 10, // Distribute across the screen
+          y: Math.random() * 10,    // Start at slightly different heights
+          rotation: Math.random() * 360,
+          color: randomColor.class,
+          colorHex: randomColor.hex,
+          size: Math.random() * 20 + 28, // Larger size range
+          variant: Math.random() > 0.5 ? 'music' : 'note'
+        };
 
-      setNotes(prev => [...prev, newNote]);
+        setNotes(prev => [...prev, newNote]);
 
-      setTimeout(() => {
-        setNotes(prev => prev.filter(note => note.id !== newNote.id));
-      }, 2000);
+        // Remove notes after animation completes
+        setTimeout(() => {
+          setNotes(prev => prev.filter(note => note.id !== newNote.id));
+        }, 3000);
+      }
     }
   }, [lastNotePlayed]);
 
@@ -59,15 +63,15 @@ const FloatingNotes: React.FC<FloatingNotesProps> = ({ lastNotePlayed }) => {
             left: `${note.x}%`,
             bottom: `${note.y}%`,
             transform: `rotate(${note.rotation}deg)`,
-            animation: 'float-up 2s ease-out forwards',
-            filter: `drop-shadow(0 0 12px ${note.colorHex})`
+            animation: 'float-up 3s ease-out forwards',
+            filter: `drop-shadow(0 0 12px ${note.colorHex})`,
+            opacity: 0.8
           }}
         >
           <Music 
             style={{ 
               width: `${note.size}px`, 
               height: `${note.size}px`,
-              opacity: 0.9
             }} 
           />
         </div>
