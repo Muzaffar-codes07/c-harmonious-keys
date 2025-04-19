@@ -4,39 +4,38 @@ import Piano from './Piano';
 import StatusBar from './StatusBar';
 import KeyboardMapping from './KeyboardMapping';
 import { type OctaveShift, type DurationType } from '@/utils/audioContext';
+import FloatingNotes from './FloatingNotes';
 
 const VirtualPiano: React.FC = () => {
   const [octaveShift, setOctaveShift] = useState<OctaveShift>(0);
   const [durationType, setDurationType] = useState<DurationType>('normal');
+  const [lastNotePlayed, setLastNotePlayed] = useState<string | null>(null);
 
   return (
-    <div className="relative min-h-screen flex flex-col items-center justify-center">
-      <div className="absolute inset-0 bg-black opacity-90 z-0"></div>
+    <div className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
+      <div className="absolute inset-0 bg-[#1A1F2C] z-0"></div>
       
-      <div className="relative z-10 w-full max-w-3xl mx-auto px-4">
+      {/* Decorative clouds */}
+      <div className="absolute top-0 left-[10%] w-32 h-16 bg-white/10 rounded-full blur-xl"></div>
+      <div className="absolute top-10 right-[15%] w-24 h-12 bg-white/10 rounded-full blur-xl"></div>
+      
+      <FloatingNotes lastNotePlayed={lastNotePlayed} />
+      
+      <div className="relative z-10 w-full max-w-5xl mx-auto px-4">
         <h1 className="text-3xl font-bold text-center text-white mb-2">Virtual Piano</h1>
-        <p className="text-center text-gray-300 mb-8">
+        <p className="text-center text-gray-400 mb-8">
           Play using your keyboard or click on the keys
         </p>
         
-        <div className="bg-background/30 backdrop-blur-md rounded-lg shadow-2xl overflow-hidden">
+        <div className="bg-black/30 backdrop-blur-md rounded-lg shadow-2xl overflow-hidden">
           <StatusBar octaveShift={octaveShift} durationType={durationType} />
           <Piano 
             octaveShift={octaveShift} 
             setOctaveShift={setOctaveShift} 
             durationType={durationType} 
-            setDurationType={setDurationType} 
+            setDurationType={setDurationType}
+            onNotePlayed={(note) => setLastNotePlayed(note)}
           />
-        </div>
-        
-        <p className="text-center text-gray-400 text-sm mt-4">
-          Click the help icon for keyboard controls
-        </p>
-        
-        <div className="text-center text-gray-400 text-sm mt-2">
-          <p>First click activates the piano and begins loading samples.</p>
-          <p>If samples aren't available, the piano will use synthesized sounds.</p>
-          <p>Place .wav files in public/piano-samples/ directory with format Csharp4.wav, D5.wav, etc.</p>
         </div>
       </div>
       

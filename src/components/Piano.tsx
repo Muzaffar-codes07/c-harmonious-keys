@@ -1,4 +1,3 @@
-
 import React, { useCallback } from 'react';
 import { type Note, type OctaveShift, type DurationType } from '@/utils/audioContext';
 import PianoKey from './PianoKey';
@@ -12,19 +11,22 @@ interface PianoProps {
   setOctaveShift: React.Dispatch<React.SetStateAction<OctaveShift>>;
   durationType: DurationType;
   setDurationType: React.Dispatch<React.SetStateAction<DurationType>>;
+  onNotePlayed?: (note: string) => void;
 }
 
 const Piano: React.FC<PianoProps> = ({ 
   octaveShift, 
   setOctaveShift, 
   durationType, 
-  setDurationType 
+  setDurationType,
+  onNotePlayed 
 }) => {
   const { initialized, samplesLoaded, initializeAudio } = useAudioInitializer();
   
   const handleNotePlay = useCallback((note: Note) => {
     initializeAudio();
-  }, [initializeAudio]);
+    onNotePlayed?.(note);
+  }, [initializeAudio, onNotePlayed]);
 
   const { pressedKeys } = usePianoKeyboard({
     octaveShift,

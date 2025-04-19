@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -78,6 +77,17 @@
 
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@keyframes float-up {
+  0% {
+    transform: translateY(0) rotate(var(--rotation));
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100vh) rotate(var(--rotation));
+    opacity: 0;
   }
 }
 
