@@ -1,4 +1,3 @@
-
 import { type Note } from '@/utils/audioContext';
 
 const generateOctaveNotes = (octave: number) => [
@@ -16,10 +15,8 @@ const generateOctaveNotes = (octave: number) => [
   { note: `B${octave}` as Note, isBlack: false, keyboardKey: octave === 4 ? 'J' : undefined },
 ];
 
+// We keep the piano structure the same, but we'll handle the octave shifting 
+// in the Piano component and the audioContext utility
 export const pianoStructure = [
-  ...generateOctaveNotes(1),
-  ...generateOctaveNotes(2),
-  ...generateOctaveNotes(3),
-  ...generateOctaveNotes(4),
-  ...generateOctaveNotes(5),
+  ...generateOctaveNotes(3),  // Default to octave 3 as the base
 ];

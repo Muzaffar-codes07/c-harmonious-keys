@@ -7,6 +7,8 @@ interface Note {
   x: number;
   y: number;
   rotation: number;
+  color: string;
+  size: number;
 }
 
 interface FloatingNotesProps {
@@ -16,6 +18,15 @@ interface FloatingNotesProps {
 const FloatingNotes: React.FC<FloatingNotesProps> = ({ lastNotePlayed }) => {
   const [notes, setNotes] = useState<Note[]>([]);
 
+  // Colors for better visibility
+  const noteColors = [
+    'text-purple-400',
+    'text-blue-400',
+    'text-cyan-400',
+    'text-white',
+    'text-pink-400'
+  ];
+
   useEffect(() => {
     if (lastNotePlayed) {
       const newNote: Note = {
@@ -23,6 +34,8 @@ const FloatingNotes: React.FC<FloatingNotesProps> = ({ lastNotePlayed }) => {
         x: Math.random() * 80 + 10, // 10-90% of width
         y: 100, // Start from bottom
         rotation: Math.random() * 360,
+        color: noteColors[Math.floor(Math.random() * noteColors.length)],
+        size: Math.random() * 12 + 8, // Random size between 8-20
       };
 
       setNotes(prev => [...prev, newNote]);
@@ -39,15 +52,16 @@ const FloatingNotes: React.FC<FloatingNotesProps> = ({ lastNotePlayed }) => {
       {notes.map((note) => (
         <div
           key={note.id}
-          className="absolute text-white/30"
+          className={`absolute ${note.color}`}
           style={{
             left: `${note.x}%`,
             bottom: `${note.y}%`,
             transform: `rotate(${note.rotation}deg)`,
-            animation: 'float-up 2s ease-out forwards'
+            animation: 'float-up 2s ease-out forwards',
+            filter: 'drop-shadow(0 0 8px rgba(255, 255, 255, 0.5))'
           }}
         >
-          <Music className="w-8 h-8" />
+          <Music style={{ width: `${note.size}px`, height: `${note.size}px` }} />
         </div>
       ))}
     </div>
