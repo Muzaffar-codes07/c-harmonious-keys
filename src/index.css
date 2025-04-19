@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -100,6 +99,25 @@
     opacity: 0;
     scale: 0.9;
   }
+}
+
+@keyframes cloud-drift {
+  0% {
+    transform: translateX(-5px);
+    opacity: 0.08;
+  }
+  50% {
+    transform: translateX(5px);
+    opacity: 0.12;
+  }
+  100% {
+    transform: translateX(-5px);
+    opacity: 0.08;
+  }
+}
+
+.cloud {
+  animation: cloud-drift 8s ease-in-out infinite;
 }
 
 @keyframes keyPress {

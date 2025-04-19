@@ -20,7 +20,6 @@ interface FloatingNotesProps {
 const FloatingNotes: React.FC<FloatingNotesProps> = ({ lastNotePlayed }) => {
   const [notes, setNotes] = useState<Note[]>([]);
 
-  // Enhanced color palette matching the image
   const noteColors = [
     { class: 'text-red-500', hex: '#ef4444' },
     { class: 'text-slate-300', hex: '#cbd5e1' },
@@ -29,23 +28,23 @@ const FloatingNotes: React.FC<FloatingNotesProps> = ({ lastNotePlayed }) => {
 
   useEffect(() => {
     if (lastNotePlayed) {
-      // Create more notes per key press to match the reference image
-      for (let i = 0; i < 3; i++) {
+      const noteCount = Math.floor(Math.random() * 2) + 2; // 2-3 notes per key press
+      
+      for (let i = 0; i < noteCount; i++) {
         const randomColor = noteColors[Math.floor(Math.random() * noteColors.length)];
         const newNote: Note = {
           id: Date.now() + i,
-          x: Math.random() * 80 + 10, // Distribute across the screen
-          y: Math.random() * 10,    // Start at slightly different heights
+          x: Math.random() * 90 + 5, // More spread across screen (5-95%)
+          y: Math.random() * 20, // Start at different heights
           rotation: Math.random() * 360,
           color: randomColor.class,
           colorHex: randomColor.hex,
-          size: Math.random() * 20 + 28, // Larger size range
+          size: Math.random() * 16 + 24, // 24-40px size range
           variant: Math.random() > 0.5 ? 'music' : 'note'
         };
 
         setNotes(prev => [...prev, newNote]);
 
-        // Remove notes after animation completes
         setTimeout(() => {
           setNotes(prev => prev.filter(note => note.id !== newNote.id));
         }, 3000);
@@ -53,8 +52,25 @@ const FloatingNotes: React.FC<FloatingNotesProps> = ({ lastNotePlayed }) => {
     }
   }, [lastNotePlayed]);
 
+  // Add decorative cloud elements
+  const cloudPositions = [
+    { left: '10%', top: '15%' },
+    { right: '15%', top: '10%' },
+    { left: '20%', bottom: '20%' },
+    { right: '25%', bottom: '30%' }
+  ];
+
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden">
+      {/* Decorative clouds */}
+      {cloudPositions.map((pos, i) => (
+        <div
+          key={i}
+          className="absolute w-32 h-16 bg-gray-400/10 rounded-full blur-xl"
+          style={pos}
+        />
+      ))}
+      
       {notes.map((note) => (
         <div
           key={note.id}
