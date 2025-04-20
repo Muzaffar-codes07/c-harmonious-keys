@@ -1,4 +1,3 @@
-
 import React, { useCallback } from 'react';
 import { type Note, type OctaveShift, type DurationType } from '@/utils/audioContext';
 import PianoKey from './PianoKey';
@@ -56,23 +55,18 @@ const Piano: React.FC<PianoProps> = ({
   };
 
   const getBlackKeyPosition = (index: number): number => {
-    const whiteKeyWidth = 48; // w-12 (3rem)
+    const whiteKeyWidth = 56; // w-14 = 3.5rem = 56px
     
     // Calculate positions to be exactly between white keys
-    const positions = [
-      whiteKeyWidth * 0.5,      // C# (exactly between C and D)
-      whiteKeyWidth * 1.5,      // D# (exactly between D and E)
-      whiteKeyWidth * 3.5,      // F# (exactly between F and G)
-      whiteKeyWidth * 4.5,      // G# (exactly between G and A)
-      whiteKeyWidth * 5.5,      // A# (exactly between A and B)
-    ];
+    const positions = {
+      1: whiteKeyWidth * 0.75,    // C# (between C and D)
+      3: whiteKeyWidth * 1.75,    // D# (between D and E)
+      6: whiteKeyWidth * 3.75,    // F# (between F and G)
+      8: whiteKeyWidth * 4.75,    // G# (between G and A)
+      10: whiteKeyWidth * 5.75,   // A# (between A and B)
+    };
     
-    const blackKeyIndices = pianoStructure
-      .filter(key => key.isBlack)
-      .map(key => pianoStructure.indexOf(key));
-    
-    const blackKeyIndex = blackKeyIndices.indexOf(index);
-    return positions[blackKeyIndex];
+    return positions[index] || 0;
   };
 
   return (
@@ -100,35 +94,20 @@ const Piano: React.FC<PianoProps> = ({
         </button>
       </div>
 
-      <div className="keyboard flex relative rounded-xl bg-[#121212] p-2 space-x-0.5 border-8 border-[#121212]">
-        {pianoStructure.filter(key => !key.isBlack).map((key) => (
+      <div className="keyboard flex relative rounded-xl bg-[#121212] p-3 space-x-0.5 border-8 border-[#121212]">
+        {pianoStructure.map((key, index) => (
           <PianoKey
             key={key.note}
             note={key.note}
-            isBlack={false}
+            isBlack={key.isBlack}
             keyboardKey={key.keyboardKey}
             octaveShift={octaveShift}
             durationType={durationType}
             isPressed={key.keyboardKey ? pressedKeys[key.keyboardKey.toLowerCase()] : false}
             onNotePlay={handleNotePlay}
+            position={key.isBlack ? getBlackKeyPosition(index) : undefined}
           />
         ))}
-        
-        {pianoStructure.map((key, index) => 
-          key.isBlack ? (
-            <PianoKey
-              key={key.note}
-              note={key.note}
-              isBlack={true}
-              keyboardKey={key.keyboardKey}
-              octaveShift={octaveShift}
-              durationType={durationType}
-              isPressed={key.keyboardKey ? pressedKeys[key.keyboardKey.toLowerCase()] : false}
-              onNotePlay={handleNotePlay}
-              position={getBlackKeyPosition(index)}
-            />
-          ) : null
-        )}
       </div>
       
       <PianoOverlay 

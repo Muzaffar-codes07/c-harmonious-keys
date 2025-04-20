@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -102,6 +101,16 @@
   }
 }
 
+@keyframes keyPress {
+  0% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(2px) scale(0.98); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+.animate-key-press {
+  animation: keyPress 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 @keyframes cloud-drift {
   0% {
     transform: translateX(-20px);
@@ -115,15 +124,5 @@
 }
 
 .cloud {
-  animation: cloud-drift 8s ease-in-out infinite;
-}
-
-@keyframes keyPress {
-  0% { transform: translateY(0); }
-  50% { transform: translateY(2px); }
-  100% { transform: translateY(0); }
-}
-
-.animate-key-press {
-  animation: keyPress 0.15s ease-in-out;
+  animation: cloud-drift var(--duration, 30s) ease-in-out infinite;
 }
