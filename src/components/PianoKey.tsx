@@ -42,6 +42,7 @@ const PianoKey: React.FC<PianoKeyProps> = ({
           z-20
           cursor-pointer
           transition-all
+          -translate-x-1/2
           ${isPressed ? 'bg-[--key-press] animate-key-press' : ''}
           hover:bg-primary/30
         `}

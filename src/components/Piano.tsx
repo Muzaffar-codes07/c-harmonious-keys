@@ -1,4 +1,3 @@
-
 import React, { useCallback } from 'react';
 import { type Note, type OctaveShift, type DurationType } from '@/utils/audioContext';
 import PianoKey from './PianoKey';
@@ -40,39 +39,31 @@ const Piano: React.FC<PianoProps> = ({
     initializeAudio
   });
 
-  // Handle octave shifting with explicit buttons
   const handleOctaveShift = (direction: -1 | 1) => {
-    // Calculate current and new octave
     const currentOctave = 3 + Number(octaveShift);
     const newOctave = currentOctave + direction;
     
-    // Check for octave limits (1-5)
     if (newOctave < 1 || newOctave > 5) {
       toast({ description: `Octave limit reached (${newOctave})` });
       return;
     }
     
-    // Convert back to octave shift value (-1, 0, 1)
     const newOctaveShift = (newOctave - 3) as OctaveShift;
     setOctaveShift(newOctaveShift);
     toast({ description: `Octave shifted to ${newOctave}` });
   };
 
-  // Calculate positions for black keys (in pixels)
   const getBlackKeyPosition = (index: number): number => {
-    // Based on the layout, we position black keys relative to white keys
-    const whiteKeyWidth = 48; // 12px * 4 (w-12)
+    const whiteKeyWidth = 48; // w-12 (3rem)
     
-    // Black key positions (adjusted for the 7-key layout)
     const positions = [
-      whiteKeyWidth - 10,        // C#, after C
-      whiteKeyWidth * 2 - 10,    // D#, after D
-      whiteKeyWidth * 4 - 10,    // F#, after F
-      whiteKeyWidth * 5 - 10,    // G#, after G
-      whiteKeyWidth * 6 - 10,    // A#, after A
+      whiteKeyWidth * 0.75,      // C# (between C and D)
+      whiteKeyWidth * 1.75,      // D# (between D and E)
+      whiteKeyWidth * 3.75,      // F# (between F and G)
+      whiteKeyWidth * 4.75,      // G# (between G and A)
+      whiteKeyWidth * 5.75,      // A# (between A and B)
     ];
     
-    // Find which black key this is (0-4)
     const blackKeyIndices = pianoStructure
       .filter(key => key.isBlack)
       .map(key => pianoStructure.indexOf(key));
@@ -86,7 +77,6 @@ const Piano: React.FC<PianoProps> = ({
       className="flex flex-col justify-center items-center p-4 relative" 
       onClick={initializeAudio}
     >
-      {/* Octave controls */}
       <div className="flex justify-center gap-4 mb-4">
         <button 
           onClick={() => handleOctaveShift(-1)}
@@ -108,7 +98,6 @@ const Piano: React.FC<PianoProps> = ({
       </div>
 
       <div className="keyboard flex relative rounded-xl bg-[#121212] p-2 space-x-0.5 border-8 border-[#121212]">
-        {/* Render white keys first as the base layer */}
         {pianoStructure.filter(key => !key.isBlack).map((key) => (
           <PianoKey
             key={key.note}
@@ -122,7 +111,6 @@ const Piano: React.FC<PianoProps> = ({
           />
         ))}
         
-        {/* Render black keys as a second layer on top with correct positioning */}
         {pianoStructure.map((key, index) => 
           key.isBlack ? (
             <PianoKey
