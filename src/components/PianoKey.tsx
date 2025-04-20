@@ -28,15 +28,38 @@ const PianoKey: React.FC<PianoKeyProps> = ({
     playNote(note, octaveShift, durationType);
   };
 
+  if (isBlack) {
+    return (
+      <div 
+        className={`
+          absolute top-0
+          w-5 h-24
+          bg-[#121212]
+          rounded-r-md
+          z-20
+          cursor-pointer
+          transition-all
+          ${isPressed ? 'bg-[--key-press] animate-key-press' : ''}
+          hover:bg-primary/30
+        `}
+        onClick={handleClick}
+      >
+        {keyboardKey && (
+          <div className="absolute bottom-2 w-full text-center text-[10px] font-medium text-white/40">
+            {keyboardKey.toLowerCase()}
+          </div>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div 
       className={`
         relative 
-        ${isBlack 
-          ? 'bg-[#222] text-white/60 h-28 w-8 -mx-4 z-10' 
-          : 'bg-[#ddd] text-black/60 h-44 w-12'
-        } 
-        rounded-b-md 
+        bg-[#c7c9c4]
+        w-12 h-40
+        rounded-b-md
         cursor-pointer 
         flex 
         flex-col 
@@ -46,16 +69,16 @@ const PianoKey: React.FC<PianoKeyProps> = ({
         transition-all
         ${isPressed ? 'bg-[--key-press] animate-key-press' : ''}
         hover:bg-primary/30
-        border border-gray-800/20
+        border-[#121212]/20
       `}
       onClick={handleClick}
     >
       {keyboardKey && (
-        <div className="absolute bottom-8 text-[10px] font-medium opacity-40">
+        <div className="text-[10px] font-medium text-black/40 mb-1">
           {keyboardKey.toLowerCase()}
         </div>
       )}
-      <div className="text-xs opacity-30">{displayNote}</div>
+      <div className="text-xs text-black/30">{displayNote}</div>
     </div>
   );
 };

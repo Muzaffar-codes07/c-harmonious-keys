@@ -84,7 +84,7 @@ const Piano: React.FC<PianoProps> = ({
         </button>
       </div>
 
-      <div className="flex relative rounded-xl overflow-hidden border-2 border-gray-800">
+      <div className="flex relative rounded-xl bg-[#121212] p-2 space-x-0.5 border-8 border-[#121212]">
         {pianoStructure.map((key, index) => (
           <PianoKey
             key={key.note}

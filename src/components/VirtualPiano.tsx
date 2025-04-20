@@ -13,13 +13,13 @@ const VirtualPiano: React.FC = () => {
 
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
-      <div className="absolute inset-0 bg-[#222] z-0"></div>
+      <div className="absolute inset-0 bg-[#1a1a1a] z-0"></div>
       
-      {/* Enhanced cloud effects */}
-      <div className="absolute top-[10%] left-[10%] w-40 h-20 bg-gray-400/10 rounded-full blur-2xl cloud"></div>
-      <div className="absolute top-[15%] right-[15%] w-32 h-16 bg-gray-400/10 rounded-full blur-2xl cloud"></div>
-      <div className="absolute bottom-[25%] left-[20%] w-48 h-24 bg-gray-400/10 rounded-full blur-2xl cloud"></div>
-      <div className="absolute bottom-[30%] right-[25%] w-56 h-28 bg-gray-400/10 rounded-full blur-2xl cloud"></div>
+      {/* Enhanced cloud effects with more visibility */}
+      <div className="absolute top-[10%] left-[10%] w-40 h-20 bg-gray-300/15 rounded-full blur-2xl cloud"></div>
+      <div className="absolute top-[15%] right-[15%] w-32 h-16 bg-gray-300/15 rounded-full blur-2xl cloud"></div>
+      <div className="absolute bottom-[25%] left-[20%] w-48 h-24 bg-gray-300/15 rounded-full blur-2xl cloud"></div>
+      <div className="absolute bottom-[30%] right-[25%] w-56 h-28 bg-gray-300/15 rounded-full blur-2xl cloud"></div>
       
       <FloatingNotes lastNotePlayed={lastNotePlayed} />
       
