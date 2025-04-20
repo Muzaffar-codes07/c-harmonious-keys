@@ -58,6 +58,29 @@ const Piano: React.FC<PianoProps> = ({
     toast({ description: `Octave shifted to ${newOctave}` });
   };
 
+  // Calculate positions for black keys (in pixels)
+  const getBlackKeyPosition = (index: number): number => {
+    // Based on the layout, we position black keys relative to white keys
+    const whiteKeyWidth = 48; // 12px * 4 (w-12)
+    
+    // Black key positions (adjusted for the 7-key layout)
+    const positions = [
+      whiteKeyWidth - 10,        // C#, after C
+      whiteKeyWidth * 2 - 10,    // D#, after D
+      whiteKeyWidth * 4 - 10,    // F#, after F
+      whiteKeyWidth * 5 - 10,    // G#, after G
+      whiteKeyWidth * 6 - 10,    // A#, after A
+    ];
+    
+    // Find which black key this is (0-4)
+    const blackKeyIndices = pianoStructure
+      .filter(key => key.isBlack)
+      .map(key => pianoStructure.indexOf(key));
+    
+    const blackKeyIndex = blackKeyIndices.indexOf(index);
+    return positions[blackKeyIndex];
+  };
+
   return (
     <div 
       className="flex flex-col justify-center items-center p-4 relative" 
@@ -84,12 +107,13 @@ const Piano: React.FC<PianoProps> = ({
         </button>
       </div>
 
-      <div className="flex relative rounded-xl bg-[#121212] p-2 space-x-0.5 border-8 border-[#121212]">
-        {pianoStructure.map((key, index) => (
+      <div className="keyboard flex relative rounded-xl bg-[#121212] p-2 space-x-0.5 border-8 border-[#121212]">
+        {/* Render white keys first as the base layer */}
+        {pianoStructure.filter(key => !key.isBlack).map((key) => (
           <PianoKey
             key={key.note}
             note={key.note}
-            isBlack={key.isBlack}
+            isBlack={false}
             keyboardKey={key.keyboardKey}
             octaveShift={octaveShift}
             durationType={durationType}
@@ -97,6 +121,23 @@ const Piano: React.FC<PianoProps> = ({
             onNotePlay={handleNotePlay}
           />
         ))}
+        
+        {/* Render black keys as a second layer on top with correct positioning */}
+        {pianoStructure.map((key, index) => 
+          key.isBlack ? (
+            <PianoKey
+              key={key.note}
+              note={key.note}
+              isBlack={true}
+              keyboardKey={key.keyboardKey}
+              octaveShift={octaveShift}
+              durationType={durationType}
+              isPressed={key.keyboardKey ? pressedKeys[key.keyboardKey.toLowerCase()] : false}
+              onNotePlay={handleNotePlay}
+              position={getBlackKeyPosition(index)}
+            />
+          ) : null
+        )}
       </div>
       
       <PianoOverlay 

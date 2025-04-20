@@ -10,6 +10,7 @@ interface PianoKeyProps {
   durationType: DurationType;
   isPressed: boolean;
   onNotePlay: (note: Note) => void;
+  position?: number; // Add position prop to position black keys
 }
 
 const PianoKey: React.FC<PianoKeyProps> = ({ 
@@ -19,7 +20,8 @@ const PianoKey: React.FC<PianoKeyProps> = ({
   octaveShift,
   durationType,
   isPressed,
-  onNotePlay
+  onNotePlay,
+  position
 }) => {
   const displayNote = note.replace(/s/, '#').slice(0, -1);
   
@@ -32,7 +34,8 @@ const PianoKey: React.FC<PianoKeyProps> = ({
     return (
       <div 
         className={`
-          absolute top-0
+          absolute 
+          top-0
           w-5 h-24
           bg-[#121212]
           rounded-r-md
@@ -42,6 +45,7 @@ const PianoKey: React.FC<PianoKeyProps> = ({
           ${isPressed ? 'bg-[--key-press] animate-key-press' : ''}
           hover:bg-primary/30
         `}
+        style={{ left: position ? `${position}px` : 'auto' }}
         onClick={handleClick}
       >
         {keyboardKey && (
