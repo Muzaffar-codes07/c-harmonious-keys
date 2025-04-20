@@ -11,6 +11,7 @@ interface Note {
   size: number;
   variant: 'music' | 'note';
   colorHex: string;
+  opacity: number;
 }
 
 interface FloatingNotesProps {
@@ -22,13 +23,15 @@ const FloatingNotes: React.FC<FloatingNotesProps> = ({ lastNotePlayed }) => {
 
   const noteColors = [
     { class: 'text-red-500', hex: '#ef4444' },
-    { class: 'text-slate-300', hex: '#cbd5e1' },
-    { class: 'text-orange-400', hex: '#fb923c' }
+    { class: 'text-blue-400', hex: '#60a5fa' },
+    { class: 'text-orange-400', hex: '#fb923c' },
+    { class: 'text-purple-400', hex: '#c084fc' },
+    { class: 'text-emerald-400', hex: '#34d399' }
   ];
 
   useEffect(() => {
     if (lastNotePlayed) {
-      const noteCount = Math.floor(Math.random() * 2) + 2; // 2-3 notes per key press
+      const noteCount = Math.floor(Math.random() * 3) + 2; // 2-4 notes per key press
       
       for (let i = 0; i < noteCount; i++) {
         const randomColor = noteColors[Math.floor(Math.random() * noteColors.length)];
@@ -40,7 +43,8 @@ const FloatingNotes: React.FC<FloatingNotesProps> = ({ lastNotePlayed }) => {
           color: randomColor.class,
           colorHex: randomColor.hex,
           size: Math.random() * 16 + 24, // 24-40px size range
-          variant: Math.random() > 0.5 ? 'music' : 'note'
+          variant: Math.random() > 0.5 ? 'music' : 'note',
+          opacity: Math.random() * 0.3 + 0.7 // 0.7-1.0 opacity range
         };
 
         setNotes(prev => [...prev, newNote]);
@@ -52,24 +56,36 @@ const FloatingNotes: React.FC<FloatingNotesProps> = ({ lastNotePlayed }) => {
     }
   }, [lastNotePlayed]);
 
-  // Add decorative cloud elements
-  const cloudPositions = [
-    { left: '10%', top: '15%' },
-    { right: '15%', top: '10%' },
-    { left: '20%', bottom: '20%' },
-    { right: '25%', bottom: '30%' }
-  ];
-
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden">
-      {/* Decorative clouds */}
-      {cloudPositions.map((pos, i) => (
-        <div
-          key={i}
-          className="absolute w-32 h-16 bg-gray-400/10 rounded-full blur-xl"
-          style={pos}
-        />
-      ))}
+      {/* Randomly generated decorative clouds */}
+      {Array.from({ length: 8 }).map((_, i) => {
+        // Generate random cloud properties
+        const size = Math.random() * 120 + 80; // 80-200px
+        const positionX = Math.random() * 80 + 10; // 10-90%
+        const positionY = Math.random() * 80 + 10; // 10-90%
+        const speed = Math.random() * 30 + 10; // 10-40s animation duration
+        const blur = Math.random() * 15 + 10; // 10-25px blur radius
+        const opacity = Math.random() * 0.15 + 0.1; // 0.1-0.25 opacity
+        const delay = Math.random() * -30; // Negative delay for staggered start
+        
+        return (
+          <div
+            key={i}
+            className="absolute bg-white rounded-full"
+            style={{
+              width: `${size}px`,
+              height: `${size * 0.6}px`,
+              left: `${positionX}%`,
+              top: `${positionY}%`,
+              opacity: opacity,
+              filter: `blur(${blur}px)`,
+              animation: `cloud-drift ${speed}s linear infinite`,
+              animationDelay: `${delay}s`
+            }}
+          />
+        );
+      })}
       
       {notes.map((note) => (
         <div
@@ -81,7 +97,7 @@ const FloatingNotes: React.FC<FloatingNotesProps> = ({ lastNotePlayed }) => {
             transform: `rotate(${note.rotation}deg)`,
             animation: 'float-up 3s ease-out forwards',
             filter: `drop-shadow(0 0 12px ${note.colorHex})`,
-            opacity: 0.8
+            opacity: note.opacity
           }}
         >
           <Music 

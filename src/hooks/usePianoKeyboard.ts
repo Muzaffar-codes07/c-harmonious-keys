@@ -10,6 +10,7 @@ interface UsePianoKeyboardProps {
   setDurationType: React.Dispatch<React.SetStateAction<DurationType>>;
   pianoStructure: Array<{ note: Note, isBlack?: boolean, keyboardKey?: string }>;
   initializeAudio: () => void;
+  onNotePlayed?: (note: string) => void;
 }
 
 export const usePianoKeyboard = ({
@@ -18,9 +19,11 @@ export const usePianoKeyboard = ({
   durationType,
   setDurationType,
   pianoStructure,
-  initializeAudio
+  initializeAudio,
+  onNotePlayed
 }: UsePianoKeyboardProps) => {
   const [pressedKeys, setPressedKeys] = useState<Record<string, boolean>>({});
+  const [currentlyPlayingNotes, setCurrentlyPlayingNotes] = useState<string[]>([]);
 
   // Set duration and provide feedback
   const setDurationWithFeedback = useCallback((newDuration: DurationType, modeName: string) => {
@@ -97,6 +100,11 @@ export const usePianoKeyboard = ({
     if (keyInfo) {
       setPressedKeys(prev => ({ ...prev, [key]: true }));
       playNote(keyInfo.note, octaveShift, durationType);
+      
+      // Trigger the onNotePlayed callback to update the floating notes
+      if (onNotePlayed) {
+        onNotePlayed(keyInfo.note);
+      }
     }
   }, [
     octaveShift, 
@@ -105,7 +113,8 @@ export const usePianoKeyboard = ({
     initializeAudio,
     setDurationWithFeedback,
     shiftOctaveWithFeedback,
-    resetSettings
+    resetSettings,
+    onNotePlayed
   ]);
 
   const handleKeyUp = useCallback((e: KeyboardEvent) => {
@@ -124,5 +133,5 @@ export const usePianoKeyboard = ({
     };
   }, [handleKeyDown, handleKeyUp]);
 
-  return { pressedKeys };
+  return { pressedKeys, currentlyPlayingNotes };
 };

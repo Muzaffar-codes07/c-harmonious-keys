@@ -36,13 +36,14 @@ const PianoKey: React.FC<PianoKeyProps> = ({
         className={`
           absolute 
           top-0
-          w-5 h-24
+          w-6 h-28
           bg-[#121212]
-          rounded-r-md
+          rounded-b-md
           z-20
           cursor-pointer
           transition-all
           -translate-x-1/2
+          shadow-lg
           ${isPressed ? 'bg-[--key-press] animate-key-press' : ''}
           hover:bg-primary/30
         `}
@@ -50,7 +51,7 @@ const PianoKey: React.FC<PianoKeyProps> = ({
         onClick={handleClick}
       >
         {keyboardKey && (
-          <div className="absolute bottom-2 w-full text-center text-[10px] font-medium text-white/40">
+          <div className="absolute bottom-3 w-full text-center text-[10px] font-medium text-white/60">
             {keyboardKey.toLowerCase()}
           </div>
         )}
@@ -62,9 +63,9 @@ const PianoKey: React.FC<PianoKeyProps> = ({
     <div 
       className={`
         relative 
-        bg-[#c7c9c4]
-        w-12 h-40
-        rounded-b-md
+        bg-[#f1f1f0]
+        w-12 h-48
+        rounded-b-lg
         cursor-pointer 
         flex 
         flex-col 
@@ -72,18 +73,19 @@ const PianoKey: React.FC<PianoKeyProps> = ({
         items-center 
         pb-3
         transition-all
+        border-x border-b border-[#121212]/10
+        shadow-md
         ${isPressed ? 'bg-[--key-press] animate-key-press' : ''}
-        hover:bg-primary/30
-        border-[#121212]/20
+        hover:bg-primary/10
       `}
       onClick={handleClick}
     >
       {keyboardKey && (
-        <div className="text-[10px] font-medium text-black/40 mb-1">
+        <div className="text-xs font-medium text-black/50 mb-1">
           {keyboardKey.toLowerCase()}
         </div>
       )}
-      <div className="text-xs text-black/30">{displayNote}</div>
+      <div className="text-sm font-semibold text-black/40">{displayNote}</div>
     </div>
   );
 };

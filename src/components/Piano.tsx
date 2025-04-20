@@ -1,3 +1,4 @@
+
 import React, { useCallback } from 'react';
 import { type Note, type OctaveShift, type DurationType } from '@/utils/audioContext';
 import PianoKey from './PianoKey';
@@ -30,13 +31,14 @@ const Piano: React.FC<PianoProps> = ({
     onNotePlayed?.(note);
   }, [initializeAudio, onNotePlayed]);
 
-  const { pressedKeys } = usePianoKeyboard({
+  const { pressedKeys, currentlyPlayingNotes } = usePianoKeyboard({
     octaveShift,
     setOctaveShift,
     durationType,
     setDurationType,
     pianoStructure,
-    initializeAudio
+    initializeAudio,
+    onNotePlayed
   });
 
   const handleOctaveShift = (direction: -1 | 1) => {
@@ -56,12 +58,13 @@ const Piano: React.FC<PianoProps> = ({
   const getBlackKeyPosition = (index: number): number => {
     const whiteKeyWidth = 48; // w-12 (3rem)
     
+    // Calculate positions to be exactly between white keys
     const positions = [
-      whiteKeyWidth * 0.75,      // C# (between C and D)
-      whiteKeyWidth * 1.75,      // D# (between D and E)
-      whiteKeyWidth * 3.75,      // F# (between F and G)
-      whiteKeyWidth * 4.75,      // G# (between G and A)
-      whiteKeyWidth * 5.75,      // A# (between A and B)
+      whiteKeyWidth * 0.5,      // C# (exactly between C and D)
+      whiteKeyWidth * 1.5,      // D# (exactly between D and E)
+      whiteKeyWidth * 3.5,      // F# (exactly between F and G)
+      whiteKeyWidth * 4.5,      // G# (exactly between G and A)
+      whiteKeyWidth * 5.5,      // A# (exactly between A and B)
     ];
     
     const blackKeyIndices = pianoStructure
