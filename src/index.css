@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -113,16 +114,19 @@
 
 @keyframes cloud-drift {
   0% {
-    transform: translateX(-20px);
+    transform: translateX(-20px) scale(var(--scale, 1));
   }
   50% {
-    transform: translateX(20px);
+    transform: translateX(20px) scale(var(--scale, 1));
   }
   100% {
-    transform: translateX(-20px);
+    transform: translateX(-20px) scale(var(--scale, 1));
   }
 }
 
 .cloud {
   animation: cloud-drift var(--duration, 30s) ease-in-out infinite;
+  border-radius: 50%;
+  opacity: var(--opacity, 0.1);
+  filter: blur(var(--blur, 15px));
 }

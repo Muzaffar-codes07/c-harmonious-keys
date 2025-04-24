@@ -58,35 +58,6 @@ const FloatingNotes: React.FC<FloatingNotesProps> = ({ lastNotePlayed }) => {
 
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden">
-      {/* Randomly generated decorative clouds */}
-      {Array.from({ length: 8 }).map((_, i) => {
-        // Generate random cloud properties
-        const size = Math.random() * 120 + 80; // 80-200px
-        const positionX = Math.random() * 80 + 10; // 10-90%
-        const positionY = Math.random() * 80 + 10; // 10-90%
-        const speed = Math.random() * 30 + 10; // 10-40s animation duration
-        const blur = Math.random() * 15 + 10; // 10-25px blur radius
-        const opacity = Math.random() * 0.15 + 0.1; // 0.1-0.25 opacity
-        const delay = Math.random() * -30; // Negative delay for staggered start
-        
-        return (
-          <div
-            key={i}
-            className="absolute bg-white rounded-full"
-            style={{
-              width: `${size}px`,
-              height: `${size * 0.6}px`,
-              left: `${positionX}%`,
-              top: `${positionY}%`,
-              opacity: opacity,
-              filter: `blur(${blur}px)`,
-              animation: `cloud-drift ${speed}s linear infinite`,
-              animationDelay: `${delay}s`
-            }}
-          />
-        );
-      })}
-      
       {notes.map((note) => (
         <div
           key={note.id}
@@ -97,7 +68,8 @@ const FloatingNotes: React.FC<FloatingNotesProps> = ({ lastNotePlayed }) => {
             transform: `rotate(${note.rotation}deg)`,
             animation: 'float-up 3s ease-out forwards',
             filter: `drop-shadow(0 0 12px ${note.colorHex})`,
-            opacity: note.opacity
+            opacity: note.opacity,
+            '--rotation': `${note.rotation}deg`,
           }}
         >
           <Music 

@@ -14,6 +14,8 @@ interface Cloud {
   blur: number;
   opacity: number;
   speed: number;
+  width: number; // Added width for more varied cloud shapes
+  height: number; // Added height for more varied cloud shapes
 }
 
 const VirtualPiano: React.FC = () => {
@@ -21,37 +23,47 @@ const VirtualPiano: React.FC = () => {
   const [durationType, setDurationType] = useState<DurationType>('normal');
   const [lastNotePlayed, setLastNotePlayed] = useState<string | null>(null);
 
-  // Generate random clouds once when component mounts
+  // Generate improved random clouds once when component mounts
   const clouds = useMemo(() => {
     const cloudCount = Math.floor(Math.random() * 5) + 8; // 8-12 clouds
-    return Array.from({ length: cloudCount }).map((_, i) => ({
-      id: i,
-      size: Math.random() * 160 + 100, // 100-260px
-      positionX: Math.random() * 80 + 10, // 10-90%
-      positionY: Math.random() * 80 + 10, // 10-90%
-      blur: Math.random() * 20 + 15, // 15-35px blur
-      opacity: Math.random() * 0.15 + 0.05, // 0.05-0.2 opacity
-      speed: Math.random() * 20 + 20, // 20-40s animation duration
-    }));
+    return Array.from({ length: cloudCount }).map((_, i) => {
+      const baseSize = Math.random() * 160 + 100; // 100-260px
+      const widthFactor = Math.random() * 0.4 + 0.8; // 0.8-1.2x width variation
+      const heightFactor = Math.random() * 0.3 + 0.5; // 0.5-0.8x height variation
+      
+      return {
+        id: i,
+        size: baseSize,
+        width: baseSize * widthFactor,
+        height: baseSize * heightFactor,
+        positionX: Math.random() * 80 + 10, // 10-90%
+        positionY: Math.random() * 80 + 10, // 10-90%
+        blur: Math.random() * 20 + 15, // 15-35px blur
+        opacity: Math.random() * 0.10 + 0.05, // 0.05-0.15 opacity (reduced)
+        speed: Math.random() * 30 + 20, // 20-50s animation duration
+      };
+    });
   }, []);
 
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
       <div className="absolute inset-0 bg-[#1a1a1a] z-0"></div>
       
-      {/* Render clouds with random properties */}
+      {/* Render improved clouds with varied shapes */}
       {clouds.map((cloud) => (
         <div
           key={cloud.id}
           className="absolute bg-white rounded-full cloud"
           style={{
-            width: `${cloud.size}px`,
-            height: `${cloud.size * 0.6}px`,
+            width: `${cloud.width}px`,
+            height: `${cloud.height}px`,
             left: `${cloud.positionX}%`,
             top: `${cloud.positionY}%`,
             opacity: cloud.opacity,
             filter: `blur(${cloud.blur}px)`,
-            animation: `cloud-drift ${cloud.speed}s linear infinite`,
+            borderRadius: '50%',
+            transform: `scale(${Math.random() * 0.4 + 0.8})`,
+            '--duration': `${cloud.speed}s`,
           }}
         />
       ))}
