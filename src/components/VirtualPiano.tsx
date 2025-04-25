@@ -63,8 +63,9 @@ const VirtualPiano: React.FC = () => {
             filter: `blur(${cloud.blur}px)`,
             borderRadius: '50%',
             transform: `scale(${Math.random() * 0.4 + 0.8})`,
+            // Fix: Use the correct syntax for CSS custom properties in React/TypeScript
             '--duration': `${cloud.speed}s`,
-          }}
+          } as React.CSSProperties}
         />
       ))}
       

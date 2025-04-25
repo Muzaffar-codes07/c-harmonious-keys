@@ -69,8 +69,9 @@ const FloatingNotes: React.FC<FloatingNotesProps> = ({ lastNotePlayed }) => {
             animation: 'float-up 3s ease-out forwards',
             filter: `drop-shadow(0 0 12px ${note.colorHex})`,
             opacity: note.opacity,
+            // Fix: Use the correct syntax for CSS custom properties in React/TypeScript
             '--rotation': `${note.rotation}deg`,
-          }}
+          } as React.CSSProperties}
         >
           <Music 
             style={{ 
