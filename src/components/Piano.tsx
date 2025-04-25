@@ -57,13 +57,13 @@ const Piano: React.FC<PianoProps> = ({
   const getBlackKeyPosition = (index: number): number => {
     const whiteKeyWidth = 56; // w-14 = 3.5rem = 56px
     
-    // Adjust positions to center black keys between white keys
+    // Adjust positions to center black keys with slight rightward bias
     const positions = {
-      1: whiteKeyWidth * 0.7,     // C# (between C and D)
-      3: whiteKeyWidth * 1.7,     // D# (between D and E)
-      6: whiteKeyWidth * 3.7,     // F# (between F and G)
-      8: whiteKeyWidth * 4.7,     // G# (between G and A)
-      10: whiteKeyWidth * 5.7,    // A# (between A and B)
+      1: whiteKeyWidth * 0.75,     // C# (between C and D, slightly right)
+      3: whiteKeyWidth * 1.75,     // D# (between D and E, slightly right)
+      6: whiteKeyWidth * 3.75,     // F# (between F and G, slightly right)
+      8: whiteKeyWidth * 4.75,     // G# (between G and A, slightly right)
+      10: whiteKeyWidth * 5.75,    // A# (between A and B, slightly right)
     };
     
     return positions[index] || 0;

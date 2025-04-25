@@ -36,7 +36,7 @@ const PianoKey: React.FC<PianoKeyProps> = ({
         className={`
           absolute 
           top-0
-          w-8 h-32
+          w-7 h-32
           bg-[#121212]
           rounded-b-lg
           z-20
