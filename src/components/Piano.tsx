@@ -60,8 +60,8 @@ const Piano: React.FC<PianoProps> = ({
     // Adjust positions to center black keys with slight rightward bias
     const positions = {
       1: whiteKeyWidth * 1.2,     // C# (between C and D, slightly right)
-      3: whiteKeyWidth * 2.3,     // D# (between D and E, slightly right)
-      6: whiteKeyWidth * 4.4,     // F# (between F and G, slightly right)
+      3: whiteKeyWidth * 2.25,     // D# (between D and E, slightly right)
+      6: whiteKeyWidth * 4.3,     // F# (between F and G, slightly right)
       8: whiteKeyWidth * 4.75,     // G# (between G and A, slightly right)
       10: whiteKeyWidth * 5.75,    // A# (between A and B, slightly right)
     };
