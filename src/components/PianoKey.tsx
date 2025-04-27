@@ -39,7 +39,7 @@ const PianoKey: React.FC<PianoKeyProps> = ({
           w-7 h-32
           bg-[#121212]
           rounded-b-lg
-          z-25
+          z-20
           cursor-pointer
           transition-all
           duration-100
