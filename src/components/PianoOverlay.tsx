@@ -27,7 +27,7 @@ const PianoOverlay: React.FC<PianoOverlayProps> = ({
     return (
       <div className="absolute bottom-2 left-0 right-0 text-center">
         <div className="inline-block bg-background/80 text-primary px-3 py-1 rounded-full text-sm">
-          Loading piano samples...
+         
         </div>
       </div>
     );
