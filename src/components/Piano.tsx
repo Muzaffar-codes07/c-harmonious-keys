@@ -62,8 +62,8 @@ const Piano: React.FC<PianoProps> = ({
       1: whiteKeyWidth * 1.2,     // C# (between C and D, slightly right)
       3: whiteKeyWidth * 2.25,     // D# (between D and E, slightly right)
       6: whiteKeyWidth * 4.3,     // F# (between F and G, slightly right)
-      8: whiteKeyWidth * 5.4,     // G# (between G and A, slightly right)
-      10: whiteKeyWidth * 6.55,    // A# (between A and B, slightly right)
+      8: whiteKeyWidth * 5.35,     // G# (between G and A, slightly right)
+      10: whiteKeyWidth * 6.35,    // A# (between A and B, slightly right)
     };
     
     return positions[index] || 0;
